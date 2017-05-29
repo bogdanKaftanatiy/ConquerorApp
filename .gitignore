@@ -12,6 +12,8 @@
 bin/
 gen/
 out/
+target/
+.mvn/
 
 # Gradle files
 .gradle/
@@ -34,7 +36,10 @@ captures/
 
 # Intellij
 *.iml
-.idea/workspace.xml
+.idea/
+*.cmd
+mvnw
+
 
 # Keystore files
 *.jks
