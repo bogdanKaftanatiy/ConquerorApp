@@ -29,12 +29,9 @@ public class UserController {
 
     @GetMapping("/check")
     public boolean checkUser(String username, String password) {
-        List<User> usersFromDb = userService.findByName(username);
-        if (usersFromDb != null && usersFromDb.size() == 1) {
-            User user = usersFromDb.get(0);
-            if(user.getPassword().equals(password)){
-                return true;
-            }
+        User user = userService.findByName(username);
+        if (user != null && user.getPassword().equals(password)){
+            return true;
         }
 
         return false;

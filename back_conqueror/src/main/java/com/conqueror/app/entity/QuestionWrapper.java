@@ -1,7 +1,16 @@
 package com.conqueror.app.entity;
 
 /**
- * Created by Bogdan Kaftanatiy on 31.05.2017.
+ * @author Bogdan Kaftanatiy
  */
 public class QuestionWrapper {
+    private String question;
+
+    private String answer1;
+
+    private String answer2;
+
+    private String answer3;
+
+    private String answer4;
 }

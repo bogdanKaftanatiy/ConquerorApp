@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author Bogdan Kaftanatiy
  */
 public interface QuestionRepository extends JpaRepository<Question, Long> {
-
+    Question findByQuestion(String question);
 }
