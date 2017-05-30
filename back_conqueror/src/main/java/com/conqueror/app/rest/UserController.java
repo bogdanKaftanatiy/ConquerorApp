@@ -3,10 +3,9 @@ package com.conqueror.app.rest;
 import com.conqueror.app.entity.User;
 import com.conqueror.app.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Rest repository for user entity
@@ -26,5 +25,18 @@ public class UserController {
     public String createUser(@RequestBody User user) {
         userService.save(user);
         return "Save user: " + user.toString();
+    }
+
+    @GetMapping("/check")
+    public boolean checkUser(String username, String password) {
+        List<User> usersFromDb = userService.findByName(username);
+        if (usersFromDb != null && usersFromDb.size() == 1) {
+            User user = usersFromDb.get(0);
+            if(user.getPassword().equals(password)){
+                return true;
+            }
+        }
+
+        return false;
     }
 }
