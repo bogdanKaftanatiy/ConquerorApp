@@ -43,6 +43,12 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     @Override
+    public List<Question> getQuestions(int count) {
+        //TODO create new list with 'count' different questions
+        return null;
+    }
+
+    @Override
     public Question findByQuestion(String question) {
         return questionRepository.findByQuestion(question);
     }
