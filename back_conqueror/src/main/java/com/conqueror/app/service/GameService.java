@@ -1,12 +1,15 @@
 package com.conqueror.app.service;
 
 import com.conqueror.app.entity.Game;
+import com.conqueror.app.entity.Question;
 import com.conqueror.app.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Bogdan Kaftanatiy
@@ -31,6 +34,25 @@ public class GameService {
         this.questionService = questionService;
     }
 
+    public Question attackTerritory(long gameId, String userName, long terittoryNumber) {
+        Game game = findGameById(gameId);
+        Question question = questionService.findRandomQuestion();
+        game.currentQuestion = question;
+        game.attackuser = findUserByUsernameAndGame(userName, game);
+
+        if(game.territory.get(terittoryNumber) != -1) {
+            game.defendUser = game.users.get(game.territory.get(terittoryNumber).intValue());
+        } else {
+            game.defendUser = null;
+        }
+
+        return question;
+    }
+
+    public Question checkMove() {
+        return null;
+    }
+
     public synchronized Game getGame(String userName) {
         User user = userService.findByName(userName);
         if(user == null) {
@@ -52,7 +74,7 @@ public class GameService {
         if(userGame.isReady()) {
             activeGames.add(userGame);
             registrationGame.remove(userGame);
-            userGame.initGame(questionService.getQuestions(QUESTION_COUNT));
+            userGame.initGame();
             notifyAll();
         } else {
             waitGameReady(userGame.getId());
@@ -77,24 +99,29 @@ public class GameService {
         }
     }
 
-    public List<Long> getUsersOrder(long gameId) {
+    public List<String> getUsersOrder(long gameId) {
         Game game = findGameById(gameId);
 
         if (game == null) {
             throw new IllegalStateException("No such game");
         }
 
-        return game.getUsersOrder();
+        return game.usersOrder;
     }
 
-    public List<Long> getUsersCastleLocation(long gameId) {
+    public Map<String, Long> getUsersCastleLocation(long gameId) {
         Game game = findGameById(gameId);
 
         if (game == null) {
             throw new IllegalStateException("No such game");
         }
 
-        return game.getUserCastleLocation();
+        Map<String, Long> result = new HashMap<>();
+        for (int i = 0; i < USER_COUNT; i++) {
+            result.put(game.users.get(i).getName(), game.userCastleLocation.get(i));
+        }
+
+        return result;
     }
 
     private Game findGameById(long id) {
@@ -106,6 +133,16 @@ public class GameService {
         for (Game actGame : activeGames) {
             if(actGame.getId() == id) {
                 return actGame;
+            }
+        }
+        return null;
+    }
+
+    private User findUserByUsernameAndGame(String username, Game game) {
+        List<User> gameUsers = game.users;
+        for (User user : gameUsers) {
+            if (user.getName().equals(username)){
+                return user;
             }
         }
         return null;

@@ -10,5 +10,7 @@ import java.util.List;
 public interface QuestionService extends CrudService<Question> {
     List<Question> getQuestions(int count);
 
+    Question findRandomQuestion();
+
     Question findByQuestion(String question);
 }

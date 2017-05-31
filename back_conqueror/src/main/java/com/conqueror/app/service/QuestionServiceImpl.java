@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Random;
 
 /**
  * @author Bogdan Kaftanatiy
@@ -46,6 +47,13 @@ public class QuestionServiceImpl implements QuestionService {
     public List<Question> getQuestions(int count) {
         //TODO create new list with 'count' different questions
         return null;
+    }
+
+    @Override
+    public Question findRandomQuestion() {
+        List<Question> questions = findAll();
+
+        return questions.get(new Random().nextInt(questions.size()));
     }
 
     @Override

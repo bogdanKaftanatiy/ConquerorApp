@@ -38,4 +38,9 @@ public class GameController {
     public String getUsersCastleLocation(long gameId) {
         return gson.toJson(gameService.getUsersCastleLocation(gameId));
     }
+
+    @GetMapping("attackTerritory")
+    public String attackTerritory(long gameId, String username, long territoryNumber) {
+        return gson.toJson(gameService.attackTerritory(gameId, username, territoryNumber));
+    }
 }
