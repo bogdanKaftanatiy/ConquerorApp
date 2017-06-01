@@ -43,4 +43,24 @@ public class GameController {
     public String attackTerritory(long gameId, String username, long territoryNumber) {
         return gson.toJson(gameService.attackTerritory(gameId, username, territoryNumber));
     }
+
+    @GetMapping("checkMove")
+    public String checkGameMove(long gameId, String username) {
+        return gson.toJson(gameService.checkMove(gameId, username));
+    }
+
+    @GetMapping("sendAnswer")
+    public String sendAnswer(long gameId, String username, String answer) {
+        return gson.toJson(gameService.sendAnswer(gameId, username, answer));
+    }
+
+    @GetMapping("gameTerritory")
+    public String gameTerritory(long gameId) {
+        return gson.toJson(gameService.getGameTerritory(gameId));
+    }
+
+    @GetMapping("getLastChanges")
+    public String getLastChanges(long gameId) {
+        return gson.toJson(gameService.getLastChange(gameId));
+    }
 }
