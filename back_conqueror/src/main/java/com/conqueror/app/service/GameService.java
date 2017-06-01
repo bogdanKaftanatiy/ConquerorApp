@@ -115,11 +115,6 @@ public class GameService {
         Game game = findGameById(gameId);
 
         if (game.defendUser == null && !game.isSingle) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
             return checkMove(gameId, userName);
         } else if(game.defendUser != null && game.defendUser.getName().equals(userName)){
             return questionWrapperService.getQuestionWrapper(game.currentQuestion);
