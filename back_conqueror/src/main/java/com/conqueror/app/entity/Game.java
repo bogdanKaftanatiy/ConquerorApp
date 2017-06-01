@@ -24,6 +24,8 @@ public class Game {
     public String defendUserAnswer;
     public User attackuser;
     public User defendUser;
+    public Long currentTerritory;
+    public Map.Entry<Long, String> lastChange;
 
     public Game(long id) {
         this.id = id;
@@ -34,15 +36,18 @@ public class Game {
     }
 
     public void initGame() {
+        initMap();
         calculateUsersCastleLocation();
         calculateUsersOrder();
-        initMap();
     }
 
     private void calculateUsersCastleLocation() {
         userCastleLocation.add(2L);
+        territory.put(2L, 0L);
         userCastleLocation.add(7L);
+        territory.put(7L, 1L);
         userCastleLocation.add(11L);
+        territory.put(11L, 2L);
     }
 
     private void calculateUsersOrder() {
