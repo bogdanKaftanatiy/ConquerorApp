@@ -1,6 +1,7 @@
 package com.example.a1.conq.GameObject;
 
 import android.content.Context;
+import android.widget.ImageView;
 import com.example.a1.conq.GameActivity;
 
 import java.io.*;
@@ -11,6 +12,16 @@ public class Map implements Serializable {
     ArrayList<GrafObject> areas;
     int height;
     int width;
+
+    public ArrayList<GrafObject> getAreas() {
+        return areas;
+    }
+    public void setChipsArea(ArrayList<ImageView> chipsArea){
+
+        for(int i=0;i<areas.size();i++){
+            areas.get(i).setChip(chipsArea.get(i));
+        }
+    }
     public Map() {
         this.areas = new ArrayList<>();
         Point p1 =new Point(225,245);
@@ -177,6 +188,22 @@ public class Map implements Serializable {
         points15.add(p38);
         points15.add(p39);
         GrafObject grafObject15 =new GrafObject(points15,15);
+
+        grafObject1.setCenter(new Point(288,356));
+        grafObject2.setCenter(new Point(581 ,236));
+        grafObject3.setCenter(new Point(904 ,296));
+        grafObject4.setCenter(new Point(1126 ,336));
+        grafObject5.setCenter(new Point(1409 ,373));
+        grafObject6.setCenter(new Point(1646 ,313));
+        grafObject7.setCenter(new Point(1646 ,587));
+        grafObject8.setCenter(new Point(1380 ,681));
+        grafObject9.setCenter(new Point(1158 ,721));
+        grafObject10.setCenter(new Point(932 ,696));
+        grafObject11.setCenter(new Point(892 ,853));
+        grafObject12.setCenter(new Point(601 ,790));
+        grafObject13.setCenter(new Point(881 ,542));
+        grafObject14.setCenter(new Point(647 ,522));
+        grafObject15.setCenter(new Point(382 ,553));
 
         grafObject1.addNearbyArea(grafObject2);
         grafObject1.addNearbyArea(grafObject14);

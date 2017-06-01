@@ -1,20 +1,55 @@
 package  com.example.a1.conq.GameObject;
 
 
+import android.widget.ImageView;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 
 public class GrafObject implements Serializable {
 
+	boolean castle;
+	ImageView chip;
 	private ArrayList<Line> lines;
 	private ArrayList<GrafObject> nearbyAreas;
 	private int number;
+	private Point center;
 	public GrafObject(){
 		number =-1;
 		lines=new ArrayList<>();
 		nearbyAreas=new ArrayList<>();
 
 	}
+
+	public ImageView getChip() {
+		return chip;
+	}
+
+	public void setChip(ImageView chip) {
+		this.chip = chip;
+
+	}
+
+	public int getNumber() {
+		return number;
+	}
+
+	public boolean isCastle() {
+		return castle;
+	}
+
+	public void setCastle(boolean castle) {
+		this.castle = castle;
+	}
+
+	public Point getCenter() {
+		return center;
+	}
+
+	public void setCenter(Point center) {
+		this.center = center;
+	}
+
 	public void addNearbyArea(GrafObject g){
 		if(!nearbyAreas.contains(g)) nearbyAreas.add(g);
 	}
