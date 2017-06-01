@@ -96,7 +96,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         new GetSeq().execute();
 
 
-
+        Log.d("GAME", "START");
     }
     private void setPositionView(){
         FrameLayout fl = (FrameLayout) findViewById(R.id.fl);
@@ -111,12 +111,12 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         }
     }
     private  void playGame(){
-        Log.d("playGame","start");
+        Log.d("GAME","play game d ot n");
         if(!progress.get(currentStep).equals(SingletonUser.getSingletonUser().getName())) {
-            Log.d("playGame","if");
+            Log.d("GAME","DefeatOrNothing");
             new DefeatOrNothing().execute();
         }else{
-            Log.d("playGame","else");
+            Log.d("GAME","touch to ATTACK");
         }
     }
     class DefeatOrNothing extends AsyncTask<Void,String,String>
@@ -127,11 +127,14 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         @Override
         protected String doInBackground(Void... params) {
             try {
+                Log.d("GAME","execute DefeatOrNothing");
                 URL url = new URL("http://10.0.3.2:8080/rest/game/checkMove?gameId="+
                         SingletonUser.getSingletonUser().currentGame+"&username="+
                         SingletonUser.getSingletonUser().getName());
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                Log.d("GAME","execute DefeatOrNothing URL");
                 try {
+                    Log.d("GAME","execute DefeatOrNothing try");
                     BufferedReader in = new BufferedReader(
                             new InputStreamReader(urlConnection.getInputStream()));
                     String inputLine;
@@ -143,11 +146,13 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                     in.close();
 
                     Gson gson = new Gson();
+                    Log.d("GAME","before que");
                     QuestionWrapper questionWrapper = (gson.fromJson(response.toString(), QuestionWrapper.class));
                     if(questionWrapper==null){
-                        Log.d("d0rn","null");
+                        Log.d("GAME","NOTHING");
                     }else
-                    Log.d("d0rn",questionWrapper.getQuestion() );
+                    Log.d("GAME","DEFF" + questionWrapper.getQuestion() );
+                    Log.d("GAME","after que");
                 }
                 finally {
                     urlConnection.disconnect();
@@ -268,6 +273,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         @Override
         protected String doInBackground(Void... params) {
             try {
+                Log.d("GAME","get seq");
                 URL url = new URL("http://10.0.3.2:8080/rest/game/usersOrder?gameId="+
                         SingletonUser.getSingletonUser().currentGame);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
@@ -529,25 +535,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
             layout.addView(button3);
             layout.addView(button4);
 
-            button1.setOnClickListener( new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (SingletonUser.getSingletonUser().getName()!=null){
-                        Intent intent = new Intent(MainActivity.this, GameActivity.class);
-                        new MainActivity.FindGame(intent).execute();
-                    }
-                }
-            });
-            builder.setView(layout);
 
-            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    l=inputLogin.getText().toString();
-                    p=inputPass.getText().toString();
-                    new MainActivity.Login().execute();
-                }
-            });
             builder.setNeutralButton("reg", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
