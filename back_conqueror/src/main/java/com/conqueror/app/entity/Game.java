@@ -23,6 +23,7 @@ public class Game {
     public String attackUserAnswer;
     public String defendUserAnswer;
     public User attackuser;
+    public boolean isSingle;
     public User defendUser;
     public Long currentTerritory;
     public Map.Entry<Long, String> lastChange;

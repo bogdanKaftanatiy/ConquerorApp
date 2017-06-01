@@ -96,8 +96,10 @@ public class GameService {
 
         if(game.territory.get(terittoryNumber) != -1) {
             game.defendUser = game.users.get(game.territory.get(terittoryNumber).intValue());
+            game.isSingle = false;
         } else {
             game.defendUser = null;
+            game.isSingle = true;
         }
 
         game.currentTerritory = terittoryNumber;
@@ -111,10 +113,16 @@ public class GameService {
 
     public synchronized QuestionWrapper checkMove(long gameId, String userName) {
         Game game = findGameById(gameId);
-        if(game.defendUser!=null && game.defendUser.getName().equals(userName)){
+
+        if (game.defendUser == null && !game.isSingle) {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return checkMove(gameId, userName);
+        } else if(game.defendUser != null && game.defendUser.getName().equals(userName)){
             return questionWrapperService.getQuestionWrapper(game.currentQuestion);
-        } if(!game.defendUser.getName().equals(userName)) {
-            return null;
         } else {
             long currentQ = game.curentQuestionNumber;
 
