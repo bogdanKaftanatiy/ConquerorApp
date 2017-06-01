@@ -63,4 +63,10 @@ public class GameController {
     public String getLastChanges(long gameId) {
         return gson.toJson(gameService.getLastChange(gameId));
     }
+
+    @GetMapping("gameResults")
+    public String gameResult(long gameId, String winner, String looser) {
+        gameService.gameEnd(gameId, winner, looser);
+        return "Game deleted";
+    }
 }

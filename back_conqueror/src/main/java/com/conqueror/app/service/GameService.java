@@ -158,6 +158,22 @@ public class GameService {
         return userGame;
     }
 
+    public void gameEnd(long gameId, String winner, String looser) {
+        Game game = findGameById(gameId);
+        User userWin = findUserByUsernameAndGame(winner, game);
+        User userLoo = findUserByUsernameAndGame(looser, game);
+        if(userWin.getRating() == null)  {
+            userWin.setRating(0D);
+        }
+        if(userLoo.getRating() == null)  {
+            userWin.setRating(0D);
+        }
+
+        userWin.setRating(userWin.getRating() + 1);
+        userLoo.setRating(userLoo.getRating() - 1);
+        activeGames.remove(game);
+    }
+
 
     public synchronized void waitGameReady(long gameId) {
         Game game = findGameById(gameId);
