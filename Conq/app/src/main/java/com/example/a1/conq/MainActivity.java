@@ -112,6 +112,7 @@ public class MainActivity extends AppCompatActivity {
                     InputStream response = urlConnection.getInputStream();
                     Scanner s = new Scanner(response).useDelimiter("\\A");
                     String result = s.hasNext() ? s.next() : "";
+                    Log.d("MAIN","id game" + result);
                     int id = Integer.parseInt(result);
                     if(id>=0){
                         SingletonUser.getSingletonUser().setName(l);
