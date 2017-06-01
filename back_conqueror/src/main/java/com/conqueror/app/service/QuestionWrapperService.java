@@ -19,13 +19,13 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 @Service
 @Transactional(propagation = Propagation.REQUIRED)
-public class QuestionWraperService {
+public class QuestionWrapperService {
     private final int QUESTION_COUNT = 4;
 
     private final OptionRepository optionRepository;
 
     @Autowired
-    public QuestionWraperService(OptionRepository optionRepository) {
+    public QuestionWrapperService(OptionRepository optionRepository) {
         this.optionRepository = optionRepository;
     }
 
