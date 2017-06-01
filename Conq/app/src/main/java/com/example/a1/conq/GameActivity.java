@@ -148,7 +148,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                     Gson gson = new Gson();
                     Log.d("GAME","before que");
                     QuestionWrapper questionWrapper = (gson.fromJson(response.toString(), QuestionWrapper.class));
-                    if(questionWrapper==null){
+                    if(questionWrapper.getQuestion().equals("")){
                         Log.d("GAME","NOTHING");
                     }else
                     Log.d("GAME","DEFF" + questionWrapper.getQuestion() );
