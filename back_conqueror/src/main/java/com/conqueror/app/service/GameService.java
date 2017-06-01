@@ -113,6 +113,8 @@ public class GameService {
         Game game = findGameById(gameId);
         if(game.defendUser!=null && game.defendUser.getName().equals(userName)){
             return questionWrapperService.getQuestionWrapper(game.currentQuestion);
+        } if(!game.defendUser.getName().equals(userName)) {
+            return null;
         } else {
             long currentQ = game.curentQuestionNumber;
 
