@@ -55,7 +55,12 @@ public class GameService {
                 }
                 System.out.println("AAAAAAAAAAAAAAA");
             }
-            return false;
+
+            if(game.currentQuestion.getAnswer().equals(game.attackUserAnswer)) {
+                return false;
+            } else {
+                return false;
+            }
         } else if (game.attackuser.getName().equals(user.getName())) {
             game.attackUserAnswer = answer;
             System.out.println("Attack answer: " + game.attackUserAnswer);
