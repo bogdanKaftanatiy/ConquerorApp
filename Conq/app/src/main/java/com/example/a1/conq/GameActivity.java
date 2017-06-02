@@ -48,10 +48,18 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     ArrayList<GrafObject> areas;
 
     ArrayList<String> progress;
+
+    Button a1 ;
+    Button a2 ;
+    Button a3 ;
+    Button a4;
+    String answer;
+    boolean deff;
     int currentStep;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         att=-1;
+        answer="";
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game);
         currentStep=0;
@@ -59,6 +67,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         map = new Map();
         map.setHeight(1080);
         map.setWidth(1920);
+        deff =false;
         curr = (TextView) findViewById(R.id.current);
         ArrayList<ImageView> imageViews=new ArrayList<>();
         imageViews.add((ImageView)findViewById(R.id.area1));
@@ -94,7 +103,23 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         areas=map.getAreas();
         setPositionView();
         new GetSeq().execute();
-
+        a1 = (Button) findViewById(R.id.answer1);
+        a2 = (Button) findViewById(R.id.answer2);
+        a3 = (Button) findViewById(R.id.answer3);
+        a4 = (Button) findViewById(R.id.answer4);
+        View.OnClickListener sendAnswer= new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Button b =(Button) findViewById(v.getId());
+                new CheckAnswer(b.getText().toString()).execute();
+                LinearLayout ll = (LinearLayout) findViewById(R.id.questionTable);
+                ll.setVisibility(View.INVISIBLE);
+            }
+        };
+        a1.setOnClickListener(sendAnswer);
+        a2.setOnClickListener(sendAnswer);
+        a3.setOnClickListener(sendAnswer);
+        a4.setOnClickListener(sendAnswer);
 
         Log.d("GAME", "START");
     }
@@ -121,12 +146,14 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     }
     class DefeatOrNothing extends AsyncTask<Void,String,String>
     {
+        QuestionWrapper questionWrapper;
 
         protected void onPreExecute() {
         }
         @Override
         protected String doInBackground(Void... params) {
             try {
+                deff=false;
                 Log.d("GAME","execute DefeatOrNothing");
                 URL url = new URL("http://10.0.3.2:8080/rest/game/checkMove?gameId="+
                         SingletonUser.getSingletonUser().currentGame+"&username="+
@@ -147,11 +174,14 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
 
                     Gson gson = new Gson();
                     Log.d("GAME","before que");
-                    QuestionWrapper questionWrapper = (gson.fromJson(response.toString(), QuestionWrapper.class));
+                    questionWrapper = (gson.fromJson(response.toString(), QuestionWrapper.class));
                     if(questionWrapper.getQuestion().equals("")){
+
                         Log.d("GAME","NOTHING");
-                    }else
-                    Log.d("GAME","DEFF" + questionWrapper.getQuestion() );
+                    }else{
+                        Log.d("GAME","DEFF" + questionWrapper.getQuestion() );
+                        deff=true;
+                    }
                     Log.d("GAME","after que");
                 }
                 finally {
@@ -168,22 +198,43 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         }
         @Override
         protected void onPostExecute(String result){
+           if(deff) showQuestion(questionWrapper) ;
+               else
+               new CheckState().execute();
         }
     }
 
+    private void showQuestion(QuestionWrapper qw){
+        LinearLayout ll = (LinearLayout) findViewById(R.id.questionTable);
+        TextView q = (TextView) findViewById(R.id.question);
+        q.setText(qw.getQuestion());
 
+        a1.setText(qw.getAnswer1());
+        a2.setText(qw.getAnswer2());
+        a3.setText(qw.getAnswer3());
+        a4.setText(qw.getAnswer4());
+
+        ll.setVisibility(View.VISIBLE);
+
+    }
     private void endGame(){
-
+        Log.d("GAME","END");
     }
-    class checkAnswer extends AsyncTask<Void,String,String>
+    class CheckAnswer extends AsyncTask<Void,String,String>
     {
-
+        String ans;
+        public CheckAnswer(String a){
+            super();
+            ans=a;
+        }
         protected void onPreExecute() {
         }
         @Override
         protected String doInBackground(Void... params) {
             try {
-                URL url = new URL("http://10.0.3.2:8080/rest/game/sendAnswer?gameId=0&username=RestTest3&answer=FFFFFFF");
+                URL url = new URL("http://10.0.3.2:8080/rest/game/sendAnswer?gameId="+
+                        SingletonUser.getSingletonUser().getCurrentGame()+
+                        "&username="+SingletonUser.getSingletonUser().getName()+"&answer="+ans);
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 try {
                     BufferedReader in = new BufferedReader(
@@ -197,10 +248,14 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                     in.close();
 
                     Gson gson = new Gson();
-                    ArrayList<String> strings = (gson.fromJson(response.toString(), ArrayList.class));
-                    progress=strings;
-                    setCurrent();
-                    playGame();
+                    boolean b = (gson.fromJson(response.toString(), Boolean.class));
+                    Log.d("GAME","ANSWE" + b);
+                    if(b){
+                        conqArea(att,SingletonUser.getSingletonUser().getName());
+                    }
+                    if(deff){
+                        conqArea(att,progress.get(currentStep));
+                    }
 
                 }
                 finally {
@@ -217,10 +272,48 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         }
         @Override
         protected void onPostExecute(String result){
-
+            newTurn();
         }
     }
-    class checkState extends AsyncTask<Void,String,String>
+    private void newTurn(){
+        if(currentStep<progress.size()){
+            currentStep++;
+            deff=false;
+            setCurrent();
+            setChips();
+            playGame();
+        }else{
+            endGame();
+        }
+    }
+    private void conqArea(int idArea, String winner){
+        GrafObject grafObject=null;
+        for(int i=0;i<redHolding.size();i++)
+            if (redHolding.get(i).getNumber()==idArea){
+                grafObject=redHolding.get(i);
+                redHolding.remove(i);
+        }
+        for(int i=0;i<greenHolding.size();i++)
+            if (greenHolding.get(i).getNumber()==idArea){
+                grafObject=greenHolding.get(i);
+                greenHolding.remove(i);
+            }
+        for(int i=0;i<blueHolding.size();i++)
+            if (blueHolding.get(i).getNumber()==idArea){
+                grafObject=blueHolding.get(i);
+                blueHolding.remove(i);
+            }
+        for(int i=0;i<areas.size();i++)
+            if (areas.get(i).getNumber()==idArea){
+                grafObject=areas.get(i);
+                areas.remove(i);
+            }
+        if(redUser.getText().equals(winner))  redHolding.add(grafObject);
+        if(greenUser.getText().equals(winner))  greenHolding.add(grafObject);
+        if(blueUser.getText().equals(winner))  blueHolding.add(grafObject);
+    }
+
+    class CheckState extends AsyncTask<Void,String,String>
     {
 
         protected void onPreExecute() {
@@ -228,7 +321,8 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         @Override
         protected String doInBackground(Void... params) {
             try {
-                URL url = new URL("http://10.0.3.2:8080/rest/game/getLastChanges?gameId=0");
+                URL url = new URL("http://10.0.3.2:8080/rest/game/getLastChanges?gameId="+
+                        SingletonUser.getSingletonUser().getCurrentGame());
                 HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                 try {
                     BufferedReader in = new BufferedReader(
@@ -242,11 +336,14 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                     in.close();
 
                     Gson gson = new Gson();
-                    ArrayList<String> strings = (gson.fromJson(response.toString(), ArrayList.class));
-                    progress=strings;
-                    setCurrent();
-                    playGame();
-
+                    java.util.Map.Entry<Long, String> entry;
+                    Log.d("OOOOOOOOOOOOOO","response "+response);
+                    entry = (gson.fromJson(response.toString(), java.util.Map.Entry.class));
+                    Number key = entry.getKey();
+                    String value = entry.getValue();
+                    if(!value.equals("")){
+                        conqArea(key.intValue(),value);
+                    }
                 }
                 finally {
                     urlConnection.disconnect();
@@ -262,7 +359,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         }
         @Override
         protected void onPostExecute(String result){
-
+            newTurn();
         }
     }
     class GetSeq extends AsyncTask<Void,String,String>
@@ -391,7 +488,6 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
             redUser.setText(array[0].toString());
 
             Number d  = Jmap.get(array[0]);
-            Log.d("123",d+"");
             for(int i=0;i<=areas.size();i++){
                 if(areas.get(i).getNumber()==d.intValue()) {
                     areas.get(i).setCastle(true);
@@ -494,8 +590,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                     in.close();
 
                     Gson gson = new Gson();
-                     questionWrapper = (gson.fromJson(response.toString(), QuestionWrapper.class));
-
+                    questionWrapper = (gson.fromJson(response.toString(), QuestionWrapper.class));
 
 
                     Log.d("123",questionWrapper.getQuestion() );
@@ -514,43 +609,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         }
         @Override
         protected void onPostExecute(String result){
-            AlertDialog.Builder builder = new AlertDialog.Builder(GameActivity.this);
-            builder.setTitle("QQQ");
-            Context context =  GameActivity.this.getBaseContext();
-            LinearLayout layout = new LinearLayout(context);
-            layout.setOrientation(LinearLayout.VERTICAL);
-            final TextView question = new TextView(GameActivity.this);
-            question.setText(questionWrapper.getQuestion());
-            final Button button1 = new Button(GameActivity.this) ;
-            final Button button2 = new Button(GameActivity.this) ;
-            final Button button3 = new Button(GameActivity.this) ;
-            final Button button4 = new Button(GameActivity.this) ;
-            button1.setText(questionWrapper.getAnswer1());
-            button2.setText(questionWrapper.getAnswer2());
-            button3.setText(questionWrapper.getAnswer3());
-            button4.setText(questionWrapper.getAnswer4());
-            layout.addView(question);
-            layout.addView(button1);
-            layout.addView(button2);
-            layout.addView(button3);
-            layout.addView(button4);
-
-
-            builder.setNeutralButton("reg", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Intent intent = new Intent(GameActivity.this, Registration.class);
-                    startActivity(intent);
-                }
-            });
-            builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.cancel();
-                }
-            });
-
-            builder.show();
+            showQuestion(questionWrapper);
         }
     }
 }

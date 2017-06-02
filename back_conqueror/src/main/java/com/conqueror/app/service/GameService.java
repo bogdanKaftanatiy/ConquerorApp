@@ -78,7 +78,6 @@ public class GameService {
 
             game.isBattle = false;
             game.isSingle = false;
-            notifyAll();
             game.currentQuestion = null;
             game.attackuser = null;
             game.attackUserAnswer = null;
@@ -95,7 +94,6 @@ public class GameService {
     public QuestionWrapper attackTerritory(long gameId, String userName, long terittoryNumber) {
         Game game = findGameById(gameId);
         game.isBattle = true;
-        notifyAll();
         Question question = questionService.findRandomQuestion();
         game.currentQuestion = question;
         game.attackuser = findUserByUsernameAndGame(userName, game);
@@ -139,20 +137,8 @@ public class GameService {
 //                    e.printStackTrace();
 //                }
 //            }
-            while (!game.isBattle) {
-                try {
-                    wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-            while (game.isBattle) {
-                try {
-                    wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
+           // while(!game.isBattle);
+          //  while(game.isBattle);
 
             return questionWrapperService.getEmptyWrapper();
         }
