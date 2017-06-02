@@ -66,7 +66,7 @@ public class GameService {
             }
 
             boolean res = false;
-            game.lastChange = new AbstractMap.SimpleEntry<Long, String>(game.currentTerritory, game.defendUser==null?null:game.defendUser.getName());
+            game.lastChange = new AbstractMap.SimpleEntry<Long, String>(game.currentTerritory, game.defendUser==null?"":game.defendUser.getName());
             if (game.currentQuestion.getAnswer().equals(answer)) {
                 game.lastChange = new AbstractMap.SimpleEntry<Long, String>(game.currentTerritory, game.attackuser.getName());
                 System.out.println("Set " + game.currentTerritory + " to " + game.users.indexOf(user));
