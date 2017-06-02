@@ -39,6 +39,7 @@ public class GameService {
         User user = findUserByUsernameAndGame(userName, game);
 
         if (game.defendUser == null) {
+            game.defendUserAnswer = answer;
             notifyAll();
             return false;
         } else if(game.defendUser != null && game.defendUser.getName().equals(user.getName())) {
