@@ -38,7 +38,9 @@ public class GameService {
         Game game = findGameById(gameId);
         User user = findUserByUsernameAndGame(userName, game);
 
-        if(game.defendUser != null && game.defendUser.getName().equals(user.getName())) {
+        if (game.defendUser == null) {
+            return false;
+        } else if(game.defendUser != null && game.defendUser.getName().equals(user.getName())) {
             game.defendUserAnswer = answer;
             notifyAll();
             System.out.println("Attack answer: " + game.attackUserAnswer);
