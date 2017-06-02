@@ -38,11 +38,7 @@ public class GameService {
         Game game = findGameById(gameId);
         User user = findUserByUsernameAndGame(userName, game);
 
-        if (game.defendUser == null) {
-            game.defendUserAnswer = answer;
-            notifyAll();
-            return false;
-        } else if(game.defendUser != null && game.defendUser.getName().equals(user.getName())) {
+        if(game.defendUser != null && game.defendUser.getName().equals(user.getName())) {
             game.defendUserAnswer = answer;
             notifyAll();
             System.out.println("Attack answer: " + game.attackUserAnswer);
@@ -65,13 +61,19 @@ public class GameService {
             game.attackUserAnswer = answer;
             System.out.println("Attack answer: " + game.attackUserAnswer);
             System.out.println("Defend answer: " + game.defendUserAnswer);
-            notifyAll();
-            while (game.defendUserAnswer == null) {
-                try {
-                    wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+
+            if (game.defendUser != null) {
+
+                notifyAll();
+                while (game.defendUserAnswer == null) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
+            } else {
+                game.defendUserAnswer = answer;
             }
 
             boolean res = false;
