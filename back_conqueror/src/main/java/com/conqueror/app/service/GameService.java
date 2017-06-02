@@ -40,22 +40,14 @@ public class GameService {
 
         if(game.defendUser != null && game.defendUser.getName().equals(user.getName())) {
             game.defendUserAnswer = answer;
-            notifyAll();
             System.out.println("Attack answer: " + game.attackUserAnswer);
             System.out.println("Defend answer: " + game.defendUserAnswer);
-            if (game.attackUserAnswer == null) {
-                try {
-                    wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                System.out.println("AAAAAAAAAAAAAAA");
-            }
+            while (game.attackUserAnswer == null);
 
             if(game.currentQuestion.getAnswer().equals(game.attackUserAnswer)) {
                 return false;
             } else {
-                return false;
+                return true;
             }
         } else if (game.attackuser.getName().equals(user.getName())) {
             game.attackUserAnswer = answer;
@@ -64,15 +56,7 @@ public class GameService {
 
             if (game.defendUser != null) {
 
-                notifyAll();
-                while (game.defendUserAnswer == null) {
-                    try {
-                        wait();
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            } else {
+                while (game.defendUserAnswer == null);
                 game.defendUserAnswer = answer;
             }
 
@@ -93,8 +77,6 @@ public class GameService {
             game.defendUserAnswer = null;
             game.currentTerritory = null;
             game.curentQuestionNumber++;
-
-            notifyAll();
 
             return res;
         }
