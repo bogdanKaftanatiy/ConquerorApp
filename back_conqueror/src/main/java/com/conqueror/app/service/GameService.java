@@ -42,32 +42,40 @@ public class GameService {
             game.defendUserAnswer = answer;
             System.out.println("Attack answer: " + game.attackUserAnswer);
             System.out.println("Defend answer: " + game.defendUserAnswer);
-            while (game.attackUserAnswer == null);
-
-            if(game.currentQuestion.getAnswer().equals(game.attackUserAnswer)) {
-                return false;
-            } else {
-                return true;
-            }
-        } else if (game.attackuser.getName().equals(user.getName())) {
+            return false;
+        } else if (game.attackuser.getName().equals(user.getName()) && game.defendUser != null) {
             game.attackUserAnswer = answer;
             System.out.println("Attack answer: " + game.attackUserAnswer);
             System.out.println("Defend answer: " + game.defendUserAnswer);
 
-            if (game.defendUser != null) {
+            game.lastChange = new AbstractMap.SimpleEntry<Long, String>(game.currentTerritory, game.attackuser.getName());
+            System.out.println("Set " + game.currentTerritory + " to " + game.users.indexOf(user));
+            game.territory.put(game.currentTerritory, (long) game.users.indexOf(user));
 
-                while (game.defendUserAnswer == null);
-                game.defendUserAnswer = answer;
-            }
+            game.isBattle = false;
+            game.isSingle = false;
+            game.currentQuestion = null;
+            game.attackuser = null;
+            game.attackUserAnswer = null;
+            game.defendUser = null;
+            game.defendUserAnswer = null;
+            game.currentTerritory = null;
+            game.curentQuestionNumber++;
+
+            return true;
+        } else if (game.attackuser.getName().equals(user.getName()) && game.defendUser == null) {
+            game.attackUserAnswer = answer;
+            System.out.println("Attack answer: " + game.attackUserAnswer);
+            System.out.println("Defend answer: " + game.defendUserAnswer);
 
             boolean res = false;
-            game.lastChange = new AbstractMap.SimpleEntry<Long, String>(game.currentTerritory, game.defendUser==null?"":game.defendUser.getName());
-            if (game.currentQuestion.getAnswer().equals(answer)) {
+            if (game.currentQuestion.getAnswer().equals(game.attackUserAnswer)) {
+                res = true;
                 game.lastChange = new AbstractMap.SimpleEntry<Long, String>(game.currentTerritory, game.attackuser.getName());
                 System.out.println("Set " + game.currentTerritory + " to " + game.users.indexOf(user));
                 game.territory.put(game.currentTerritory, (long) game.users.indexOf(user));
-                res = true;
             }
+
             game.isBattle = false;
             game.isSingle = false;
             game.currentQuestion = null;
