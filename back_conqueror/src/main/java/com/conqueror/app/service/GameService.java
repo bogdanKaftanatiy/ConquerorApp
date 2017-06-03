@@ -24,8 +24,8 @@ public class GameService {
     private final QuestionService questionService;
     private final QuestionWrapperService questionWrapperService;
 
-    List<Game> activeGames = new ArrayList<>();
-    List<Game> registrationGame = new ArrayList<>();
+    private List<Game> activeGames = new ArrayList<>();
+    private List<Game> registrationGame = new ArrayList<>();
 
     @Autowired
     public GameService(UserService userService, QuestionService questionService, QuestionWrapperService questionWrapperService) {
@@ -34,118 +34,101 @@ public class GameService {
         this.questionWrapperService = questionWrapperService;
     }
 
-    public synchronized boolean sendAnswer(long gameId, String userName, String answer) {
+    public boolean sendAnswer(long gameId, String userName, String answer) {
         Game game = findGameById(gameId);
         User user = findUserByUsernameAndGame(userName, game);
 
-        if(game.defendUser != null && game.defendUser.getName().equals(user.getName())) {
-            game.defendUserAnswer = answer;
-            System.out.println("Attack answer: " + game.attackUserAnswer);
-            System.out.println("Defend answer: " + game.defendUserAnswer);
-            return false;
-        } else if (game.attackuser.getName().equals(user.getName()) && game.defendUser != null) {
-            game.attackUserAnswer = answer;
-            System.out.println("Attack answer: " + game.attackUserAnswer);
-            System.out.println("Defend answer: " + game.defendUserAnswer);
+        if(game != null && user != null) {
+            if (game.defendUser != null && game.defendUser.getName().equals(user.getName())) {
+                if (game.defendUser.getName().equals(user.getName())) {
+                    game.defendUserAnswer = answer;
+                    game.gameSynchronizer.updateAnswer();
 
-            game.lastChange = new AbstractMap.SimpleEntry<Long, String>(game.currentTerritory, game.attackuser.getName());
-            System.out.println("Set " + game.currentTerritory + " to " + game.users.indexOf(user));
-            game.territory.put(game.currentTerritory, (long) game.users.indexOf(user));
+                    if(game.attackUserAnswer == null) {
+                        game.gameSynchronizer.waitAnswers();
+                    }
 
-            game.isBattle = false;
-            game.isSingle = false;
-            game.currentQuestion = null;
-            game.attackuser = null;
-            game.attackUserAnswer = null;
-            game.defendUser = null;
-            game.defendUserAnswer = null;
-            game.currentTerritory = null;
-            game.curentQuestionNumber++;
+                    //TODO: both users can send right answer
+                    return false;
+                }
+            } else if (game.attackUser.getName().equals(user.getName())) {
+                game.attackUserAnswer = answer;
+                game.gameSynchronizer.updateAnswer();
 
-            return true;
-        } else if (game.attackuser.getName().equals(user.getName()) && game.defendUser == null) {
-            game.attackUserAnswer = answer;
-            System.out.println("Attack answer: " + game.attackUserAnswer);
-            System.out.println("Defend answer: " + game.defendUserAnswer);
+                if(game.defendUser != null && game.defendUserAnswer == null) {
+                    game.gameSynchronizer.waitAnswers();
+                }
 
-            boolean res = false;
-            if (game.currentQuestion.getAnswer().equals(game.attackUserAnswer)) {
-                res = true;
-                game.lastChange = new AbstractMap.SimpleEntry<Long, String>(game.currentTerritory, game.attackuser.getName());
-                System.out.println("Set " + game.currentTerritory + " to " + game.users.indexOf(user));
-                game.territory.put(game.currentTerritory, (long) game.users.indexOf(user));
+                boolean isTerritoryChange = false;
+                game.lastChange = new AbstractMap.SimpleEntry<Long, String>(game.currentTerritory, game.defendUser == null ? null : game.defendUser.getName());
+                if (game.currentQuestion.getAnswer().equals(answer)) {
+                    game.territory.put(game.currentTerritory, (long) game.users.indexOf(user));
+                    game.lastChange = new AbstractMap.SimpleEntry<Long, String>(game.currentTerritory, game.attackUser.getName());
+                    isTerritoryChange = true;
+                }
+
+                game.currentQuestion = null;
+                game.attackUser = null;
+                game.attackUserAnswer = null;
+                game.defendUser = null;
+                game.defendUserAnswer = null;
+                game.currentTerritory = null;
+                game.currentQuestionNumber++;
+
+                game.gameSynchronizer.endMove();
+                game.gameSynchronizer.resetSynchronizer();
+
+                return isTerritoryChange;
+
             }
-
-            game.isBattle = false;
-            game.isSingle = false;
-            game.currentQuestion = null;
-            game.attackuser = null;
-            game.attackUserAnswer = null;
-            game.defendUser = null;
-            game.defendUserAnswer = null;
-            game.currentTerritory = null;
-            game.curentQuestionNumber++;
-
-            return res;
         }
         return false;
     }
 
-    public QuestionWrapper attackTerritory(long gameId, String userName, long terittoryNumber) {
+    public QuestionWrapper attackTerritory(long gameId, String userName, long territoryNumber) {
         Game game = findGameById(gameId);
-        game.isBattle = true;
-        Question question = questionService.findRandomQuestion();
-        game.currentQuestion = question;
-        game.attackuser = findUserByUsernameAndGame(userName, game);
+        if (game != null) {
+            Question question = questionService.findRandomQuestion();
+            game.currentQuestion = question;
+            game.attackUser = findUserByUsernameAndGame(userName, game);
 
-        if(game.territory.get(terittoryNumber) != -1) {
-            game.defendUser = game.users.get(game.territory.get(terittoryNumber).intValue());
-            game.isSingle = false;
-        } else {
-            game.defendUser = null;
-            game.isSingle = true;
-        }
-
-        game.currentTerritory = terittoryNumber;
-
-        System.out.println("Attacker: " + game.attackuser);
-        System.out.println("Defender: " + game.defendUser);
-        System.out.println("Territory: " + game.currentTerritory);
-
-        return questionWrapperService.getQuestionWrapper(question);
-    }
-
-    public synchronized QuestionWrapper checkMove(long gameId, String userName) {
-        Game game = findGameById(gameId);
-
-        if (game.defendUser == null && !game.isSingle) {
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            if (game.territory.get(territoryNumber) != -1) {
+                game.defendUser = game.users.get(game.territory.get(territoryNumber).intValue());
+            } else {
+                game.defendUser = null;
             }
-            return checkMove(gameId, userName);
-        } else if(game.defendUser != null && game.defendUser.getName().equals(userName)){
-            return questionWrapperService.getQuestionWrapper(game.currentQuestion);
-        } else {
-//            long currentQ = game.curentQuestionNumber;
-//
-//            while(currentQ == game.curentQuestionNumber) {
-//                try {
-//                    wait();
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-           // while(!game.isBattle);
-          //  while(game.isBattle);
 
-            return questionWrapperService.getEmptyWrapper();
+            game.currentTerritory = territoryNumber;
+
+            game.gameSynchronizer.updateAttack();
+
+            return questionWrapperService.getQuestionWrapper(question);
         }
-
+        return null;
     }
 
-    public synchronized Game getGame(String userName) {
+    public QuestionWrapper checkMove(long gameId, String userName) {
+        Game game = findGameById(gameId);
+
+        if (game != null ) {
+            if (game.defendUser != null && game.defendUser.getName().equals(userName)) {
+                return questionWrapperService.getQuestionWrapper(game.currentQuestion);
+            } else {
+                game.gameSynchronizer.waitMoveEnd();
+            }
+        }
+
+        return null;
+    }
+
+    public String waitUserAttack(long gameId) {
+        Game game = findGameById(gameId);
+
+        game.gameSynchronizer.waitAttack();
+        return "User " + game.attackUser.getName() + " attacks";
+    }
+
+    public Game getGame(String userName) {
         User user = userService.findByName(userName);
         if(user == null) {
             return null;
@@ -163,11 +146,12 @@ public class GameService {
             throw new IllegalStateException("Game is already full");
         }
 
+        userGame.gameSynchronizer.addGamer();
+
         if(userGame.isReady()) {
             activeGames.add(userGame);
             registrationGame.remove(userGame);
             userGame.initGame();
-            notifyAll();
         } else {
             waitGameReady(userGame.getId());
         }
@@ -192,19 +176,13 @@ public class GameService {
     }
 
 
-    public synchronized void waitGameReady(long gameId) {
+    public void waitGameReady(long gameId) {
         Game game = findGameById(gameId);
         if(game == null) {
             throw new IllegalStateException("No such game");
         }
 
-        while (!game.isReady()) {
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        game.gameSynchronizer.waitGameReady();
     }
 
     public List<String> getUsersOrder(long gameId) {
