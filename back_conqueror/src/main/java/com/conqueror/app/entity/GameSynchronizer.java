@@ -10,7 +10,7 @@ public class GameSynchronizer {
 
     private boolean isAnswer = false;
     private int gamerCount = 0;
-    private boolean isMove = true;
+    private boolean isMoveEnd = false;
 
     public synchronized void waitAnswer() {
         LOGGER.info("Start checking answer for wait");
@@ -63,7 +63,7 @@ public class GameSynchronizer {
 
     public synchronized void waitMoveEnd() {
         LOGGER.info("Checking move end");
-        while (isMove) {
+        while (!isMoveEnd) {
             LOGGER.info("Start waiting move end");
             try {
                 wait();
@@ -75,7 +75,7 @@ public class GameSynchronizer {
     }
 
     public synchronized void endMove() {
-        isMove = false;
+        isMoveEnd = true;
         try {
             Thread.sleep(100);
         } catch (InterruptedException e) {
@@ -85,4 +85,8 @@ public class GameSynchronizer {
         LOGGER.info("Move ended");
     }
 
+    public void reserSynchronizer() {
+        isAnswer = false;
+        isMoveEnd = false;
+    }
 }

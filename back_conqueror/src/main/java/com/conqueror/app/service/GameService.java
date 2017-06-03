@@ -88,49 +88,45 @@ public class GameService {
         return false;
     }
 
-    public QuestionWrapper attackTerritory(long gameId, String userName, long terittoryNumber) {
+    public QuestionWrapper attackTerritory(long gameId, String userName, long territoryNumber) {
         Game game = findGameById(gameId);
-        Question question = questionService.findRandomQuestion();
-        game.currentQuestion = question;
-        game.attackUser = findUserByUsernameAndGame(userName, game);
+        if (game != null) {
+            Question question = questionService.findRandomQuestion();
+            game.currentQuestion = question;
+            game.attackUser = findUserByUsernameAndGame(userName, game);
 
-        if(game.territory.get(terittoryNumber) != -1) {
-            game.defendUser = game.users.get(game.territory.get(terittoryNumber).intValue());
-        } else {
-            game.defendUser = null;
-        }
-
-        game.currentTerritory = terittoryNumber;
-
-        System.out.println("Attacker: " + game.attackUser);
-        System.out.println("Defender: " + game.defendUser);
-        System.out.println("Territory: " + game.currentTerritory);
-
-        return questionWrapperService.getQuestionWrapper(question);
-    }
-
-    public synchronized QuestionWrapper checkMove(long gameId, String userName) {
-        Game game = findGameById(gameId);
-        if(game.defendUser!=null && game.defendUser.getName().equals(userName)){
-            return questionWrapperService.getQuestionWrapper(game.currentQuestion);
-        } if(!game.defendUser.getName().equals(userName)) {
-            return null;
-        } else {
-            long currentQ = game.currentQuestionNumber;
-
-            while(currentQ == game.currentQuestionNumber) {
-                try {
-                    wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            if (game.territory.get(territoryNumber) != -1) {
+                game.defendUser = game.users.get(game.territory.get(territoryNumber).intValue());
+            } else {
+                game.defendUser = null;
             }
 
+            game.currentTerritory = territoryNumber;
+
+//            System.out.println("Attacker: " + game.attackUser);
+//            System.out.println("Defender: " + game.defendUser);
+//            System.out.println("Territory: " + game.currentTerritory);
+
+            return questionWrapperService.getQuestionWrapper(question);
         }
         return null;
     }
 
-    public synchronized Game getGame(String userName) {
+    public QuestionWrapper checkMove(long gameId, String userName) {
+        Game game = findGameById(gameId);
+
+        if (game != null ) {
+            if (game.defendUser != null && game.defendUser.getName().equals(userName)) {
+                return questionWrapperService.getQuestionWrapper(game.currentQuestion);
+            } else {
+                game.gameSynchronizer.waitMoveEnd();
+            }
+        }
+
+        return null;
+    }
+
+    public Game getGame(String userName) {
         User user = userService.findByName(userName);
         if(user == null) {
             return null;
@@ -148,11 +144,12 @@ public class GameService {
             throw new IllegalStateException("Game is already full");
         }
 
+        userGame.gameSynchronizer.addGamer();
+
         if(userGame.isReady()) {
             activeGames.add(userGame);
             registrationGame.remove(userGame);
             userGame.initGame();
-            notifyAll();
         } else {
             waitGameReady(userGame.getId());
         }
@@ -177,19 +174,13 @@ public class GameService {
     }
 
 
-    public synchronized void waitGameReady(long gameId) {
+    public void waitGameReady(long gameId) {
         Game game = findGameById(gameId);
         if(game == null) {
             throw new IllegalStateException("No such game");
         }
 
-        while (!game.isReady()) {
-            try {
-                wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        game.gameSynchronizer.waitGameReady();
     }
 
     public List<String> getUsersOrder(long gameId) {

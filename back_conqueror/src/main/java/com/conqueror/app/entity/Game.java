@@ -27,6 +27,8 @@ public class Game {
     public Long currentTerritory;
     public Map.Entry<Long, String> lastChange;
 
+    public GameSynchronizer gameSynchronizer = new GameSynchronizer();
+
     public Game(long id) {
         this.id = id;
         users = new ArrayList<>(GameService.USER_COUNT);
