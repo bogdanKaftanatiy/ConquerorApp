@@ -24,8 +24,8 @@ public class GameService {
     private final QuestionService questionService;
     private final QuestionWrapperService questionWrapperService;
 
-    List<Game> activeGames = new ArrayList<>();
-    List<Game> registrationGame = new ArrayList<>();
+    private List<Game> activeGames = new ArrayList<>();
+    private List<Game> registrationGame = new ArrayList<>();
 
     @Autowired
     public GameService(UserService userService, QuestionService questionService, QuestionWrapperService questionWrapperService) {
@@ -34,56 +34,53 @@ public class GameService {
         this.questionWrapperService = questionWrapperService;
     }
 
-    public synchronized boolean sendAnswer(long gameId, String userName, String answer) {
+    public boolean sendAnswer(long gameId, String userName, String answer) {
         Game game = findGameById(gameId);
         User user = findUserByUsernameAndGame(userName, game);
 
-        if(game.defendUser.getName().equals(user.getName())) {
-            game.defendUserAnswer = answer;
-            notifyAll();
-            System.out.println("Attack answer: " + game.attackUserAnswer);
-            System.out.println("Defend answer: " + game.defendUserAnswer);
-            if (game.attackUserAnswer == null) {
-                try {
-                    wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+        if(game != null && user != null) {
+            if (game.defendUser != null && game.defendUser.getName().equals(user.getName())) {
+                if (game.defendUser.getName().equals(user.getName())) {
+                    game.defendUserAnswer = answer;
+                    game.gameSynchronizer.updateAnswer();
+
+                    if(game.attackUserAnswer == null) {
+                        game.gameSynchronizer.waitAnswers();
+                    }
+
+                    //TODO: both users can send right answer
+                    return false;
                 }
-                System.out.println("AAAAAAAAAAAAAAA");
-            }
-            return false;
-        } else if (game.attackUser.getName().equals(user.getName())) {
-            game.attackUserAnswer = answer;
-            System.out.println("Attack answer: " + game.attackUserAnswer);
-            System.out.println("Defend answer: " + game.defendUserAnswer);
-            notifyAll();
-            while (game.defendUserAnswer == null) {
-                try {
-                    wait();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            } else if (game.attackUser.getName().equals(user.getName())) {
+                game.attackUserAnswer = answer;
+                game.gameSynchronizer.updateAnswer();
+
+                if(game.defendUser != null && game.defendUserAnswer == null) {
+                    game.gameSynchronizer.waitAnswers();
                 }
+
+                boolean isTerritoryChange = false;
+                game.lastChange = new AbstractMap.SimpleEntry<Long, String>(game.currentTerritory, game.defendUser == null ? null : game.defendUser.getName());
+                if (game.currentQuestion.getAnswer().equals(answer)) {
+                    game.territory.put(game.currentTerritory, (long) game.users.indexOf(user));
+                    game.lastChange = new AbstractMap.SimpleEntry<Long, String>(game.currentTerritory, game.attackUser.getName());
+                    isTerritoryChange = true;
+                }
+
+                game.currentQuestion = null;
+                game.attackUser = null;
+                game.attackUserAnswer = null;
+                game.defendUser = null;
+                game.defendUserAnswer = null;
+                game.currentTerritory = null;
+                game.currentQuestionNumber++;
+
+                game.gameSynchronizer.endMove();
+                game.gameSynchronizer.resetSynchronizer();
+
+                return isTerritoryChange;
+
             }
-
-            boolean res = false;
-            game.lastChange = new AbstractMap.SimpleEntry<Long, String>(game.currentTerritory, game.defendUser==null?null:game.defendUser.getName());
-            if (game.currentQuestion.getAnswer().equals(answer)) {
-                game.lastChange = new AbstractMap.SimpleEntry<Long, String>(game.currentTerritory, game.attackUser.getName());
-                System.out.println("Set " + game.currentTerritory + " to " + game.users.indexOf(user));
-                game.territory.put(game.currentTerritory, (long) game.users.indexOf(user));
-                res = true;
-            }
-            game.currentQuestion = null;
-            game.attackUser = null;
-            game.attackUserAnswer = null;
-            game.defendUser = null;
-            game.defendUserAnswer = null;
-            game.currentTerritory = null;
-            game.currentQuestionNumber++;
-
-            notifyAll();
-
-            return res;
         }
         return false;
     }

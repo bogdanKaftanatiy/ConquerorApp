@@ -8,13 +8,13 @@ import org.apache.log4j.Logger;
 public class GameSynchronizer {
     private final static Logger LOGGER = Logger.getLogger(GameSynchronizer.class);
 
-    private boolean isAnswer = false;
+    private int answersCount = 0;
     private int gamerCount = 0;
-    private boolean isMoveEnd = false;
+    private int moveEnd;
 
-    public synchronized void waitAnswer() {
+    public synchronized void waitAnswers() {
         LOGGER.info("Start checking answer for wait");
-        while(!isAnswer) {
+        while(answersCount != 2) {
             LOGGER.info("Start waiting answer");
             try {
                 wait();
@@ -27,9 +27,9 @@ public class GameSynchronizer {
     }
 
     public synchronized void updateAnswer() {
-        isAnswer = true;
+        answersCount++;
         try {
-            Thread.sleep(100);
+            wait(100);
         } catch (InterruptedException e) {
             LOGGER.warn("Stop sleeping in updateAnswer");
         }
@@ -53,7 +53,7 @@ public class GameSynchronizer {
     public synchronized void addGamer() {
         gamerCount++;
         try {
-            Thread.sleep(100);
+            wait(100);
         } catch (InterruptedException e) {
             LOGGER.warn("Stop sleeping in addGamer");
         }
@@ -63,30 +63,36 @@ public class GameSynchronizer {
 
     public synchronized void waitMoveEnd() {
         LOGGER.info("Checking move end");
-        while (!isMoveEnd) {
+        while (moveEnd == 0) {
             LOGGER.info("Start waiting move end");
             try {
                 wait();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            LOGGER.warn("Awake in waitMoveEnd. IsMoveEnd = " + moveEnd);
         }
         LOGGER.info("Finish waiting for move end");
     }
 
     public synchronized void endMove() {
-        isMoveEnd = true;
+        moveEnd++;
         try {
-            Thread.sleep(100);
+            wait(100);
         } catch (InterruptedException e) {
-            LOGGER.warn("Stop sleeping in endMove");
+            LOGGER.warn("Stop sleeping1 in endMove");
         }
         notifyAll();
+        try {
+            wait(1000);
+        } catch (InterruptedException e) {
+            LOGGER.warn("Stop sleeping2 in endMove");
+        }
         LOGGER.info("Move ended");
     }
 
-    public void reserSynchronizer() {
-        isAnswer = false;
-        isMoveEnd = false;
+    public void resetSynchronizer() {
+        answersCount = 0;
+        moveEnd = 0;
     }
 }

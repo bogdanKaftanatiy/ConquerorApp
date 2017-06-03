@@ -54,7 +54,7 @@ public class GameController {
         return gson.toJson(gameService.sendAnswer(gameId, username, answer));
     }
 
-    @GetMapping("gameTerritory")
+    @GetMapping(value = "gameTerritory", produces = "application/json")
     public String gameTerritory(long gameId) {
         return gson.toJson(gameService.getGameTerritory(gameId));
     }
