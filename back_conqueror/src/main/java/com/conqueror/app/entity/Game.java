@@ -18,11 +18,11 @@ public class Game {
     public List<Long> userCastleLocation;
     public Map<Long, Long> territory;
 
-    public long curentQuestionNumber = 0;
+    public long currentQuestionNumber = 0;
     public Question currentQuestion;
     public String attackUserAnswer;
     public String defendUserAnswer;
-    public User attackuser;
+    public User attackUser;
     public User defendUser;
     public Long currentTerritory;
     public Map.Entry<Long, String> lastChange;

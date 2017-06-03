@@ -52,7 +52,7 @@ public class GameService {
                 System.out.println("AAAAAAAAAAAAAAA");
             }
             return false;
-        } else if (game.attackuser.getName().equals(user.getName())) {
+        } else if (game.attackUser.getName().equals(user.getName())) {
             game.attackUserAnswer = answer;
             System.out.println("Attack answer: " + game.attackUserAnswer);
             System.out.println("Defend answer: " + game.defendUserAnswer);
@@ -68,18 +68,18 @@ public class GameService {
             boolean res = false;
             game.lastChange = new AbstractMap.SimpleEntry<Long, String>(game.currentTerritory, game.defendUser==null?null:game.defendUser.getName());
             if (game.currentQuestion.getAnswer().equals(answer)) {
-                game.lastChange = new AbstractMap.SimpleEntry<Long, String>(game.currentTerritory, game.attackuser.getName());
+                game.lastChange = new AbstractMap.SimpleEntry<Long, String>(game.currentTerritory, game.attackUser.getName());
                 System.out.println("Set " + game.currentTerritory + " to " + game.users.indexOf(user));
                 game.territory.put(game.currentTerritory, (long) game.users.indexOf(user));
                 res = true;
             }
             game.currentQuestion = null;
-            game.attackuser = null;
+            game.attackUser = null;
             game.attackUserAnswer = null;
             game.defendUser = null;
             game.defendUserAnswer = null;
             game.currentTerritory = null;
-            game.curentQuestionNumber++;
+            game.currentQuestionNumber++;
 
             notifyAll();
 
@@ -92,7 +92,7 @@ public class GameService {
         Game game = findGameById(gameId);
         Question question = questionService.findRandomQuestion();
         game.currentQuestion = question;
-        game.attackuser = findUserByUsernameAndGame(userName, game);
+        game.attackUser = findUserByUsernameAndGame(userName, game);
 
         if(game.territory.get(terittoryNumber) != -1) {
             game.defendUser = game.users.get(game.territory.get(terittoryNumber).intValue());
@@ -102,7 +102,7 @@ public class GameService {
 
         game.currentTerritory = terittoryNumber;
 
-        System.out.println("Attacker: " + game.attackuser);
+        System.out.println("Attacker: " + game.attackUser);
         System.out.println("Defender: " + game.defendUser);
         System.out.println("Territory: " + game.currentTerritory);
 
@@ -116,9 +116,9 @@ public class GameService {
         } if(!game.defendUser.getName().equals(userName)) {
             return null;
         } else {
-            long currentQ = game.curentQuestionNumber;
+            long currentQ = game.currentQuestionNumber;
 
-            while(currentQ == game.curentQuestionNumber) {
+            while(currentQ == game.currentQuestionNumber) {
                 try {
                     wait();
                 } catch (InterruptedException e) {
