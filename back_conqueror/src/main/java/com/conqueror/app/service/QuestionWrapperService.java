@@ -49,4 +49,11 @@ public class QuestionWrapperService {
 
         return questionWrapper;
     }
+
+    public QuestionWrapper getEmptyWrapper() {
+        QuestionWrapper questionWrapper = new QuestionWrapper();
+        questionWrapper.setQuestion("");
+
+        return questionWrapper;
+    }
 }
