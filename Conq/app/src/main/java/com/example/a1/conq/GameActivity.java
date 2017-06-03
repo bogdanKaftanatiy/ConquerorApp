@@ -1,61 +1,50 @@
 package com.example.a1.conq;
 
-
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.text.InputType;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.*;
-
 import com.example.a1.conq.GameObject.GrafObject;
 import com.example.a1.conq.GameObject.Map;
 import com.example.a1.conq.entity.QuestionWrapper;
-import com.example.a1.conq.entity.User;
 import com.google.gson.Gson;
-
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.Set;
-
 
 public class GameActivity extends AppCompatActivity implements View.OnTouchListener {
-    int width;
-    int height;
-    Map map;
-    ImageView imageMap;
-    int idGame;
-    TextView redUser;
-    TextView greenUser;
-    TextView blueUser;
-    TextView curr;
-    int att;
-    ArrayList<GrafObject> redHolding;
-    ArrayList<GrafObject> greenHolding;
-    ArrayList<GrafObject> blueHolding;
+    private int width;
+    private int height;
+    private Map map;
+    private ImageView imageMap;
+    private int idGame;
+    private TextView redUser;
+    private TextView greenUser;
+    private TextView blueUser;
+    private TextView curr;
+    private int att;
+    private ArrayList<GrafObject> redHolding;
+    private ArrayList<GrafObject> greenHolding;
+    private ArrayList<GrafObject> blueHolding;
 
-    ArrayList<GrafObject> areas;
+    private ArrayList<GrafObject> areas;
 
-    ArrayList<String> progress;
+    private ArrayList<String> progress;
 
-    Button a1 ;
-    Button a2 ;
-    Button a3 ;
-    Button a4;
-    String answer;
-    boolean deff;
-    int currentStep;
+    private Button a1 ;
+    private Button a2 ;
+    private Button a3 ;
+    private Button a4;
+    private String answer;
+    private boolean deff;
+    private int currentStep;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         att=-1;
@@ -388,8 +377,8 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                     Gson gson = new Gson();
                     ArrayList<String> strings = (gson.fromJson(response.toString(), ArrayList.class));
                     progress=strings;
-                    setCurrent();
-                    playGame();
+
+
 
                 }
                 finally {
@@ -406,7 +395,8 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         }
         @Override
         protected void onPostExecute(String result){
-
+            setCurrent();
+            playGame();
         }
     }
     private void setCurrent(){
@@ -473,9 +463,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                     urlConnection.disconnect();
                 }
             }
-            catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            catch (IOException e) {
                 e.printStackTrace();
             }
 
@@ -599,11 +587,10 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                     urlConnection.disconnect();
                 }
             }
-            catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            catch (IOException e) {
                 e.printStackTrace();
             }
+
 
             return null;
         }
