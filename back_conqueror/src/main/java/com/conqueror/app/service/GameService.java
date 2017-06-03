@@ -100,9 +100,7 @@ public class GameService {
 
             game.currentTerritory = territoryNumber;
 
-//            System.out.println("Attacker: " + game.attackUser);
-//            System.out.println("Defender: " + game.defendUser);
-//            System.out.println("Territory: " + game.currentTerritory);
+            game.gameSynchronizer.updateAttack();
 
             return questionWrapperService.getQuestionWrapper(question);
         }
@@ -121,6 +119,13 @@ public class GameService {
         }
 
         return null;
+    }
+
+    public String waitUserAttack(long gameId) {
+        Game game = findGameById(gameId);
+
+        game.gameSynchronizer.waitAttack();
+        return "User " + game.attackUser.getName() + " attacks";
     }
 
     public Game getGame(String userName) {

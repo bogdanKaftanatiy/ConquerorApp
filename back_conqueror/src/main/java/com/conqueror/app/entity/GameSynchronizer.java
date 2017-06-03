@@ -11,6 +11,32 @@ public class GameSynchronizer {
     private int answersCount = 0;
     private int gamerCount = 0;
     private int moveEnd;
+    private boolean isAttack = false;
+
+    public synchronized void waitAttack() {
+        LOGGER.info("Start checking user attack");
+        while(!isAttack) {
+            LOGGER.info("Start waiting attack");
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            LOGGER.info("Awake in waitAttack. IsAttack = " + isAttack);
+        }
+        LOGGER.info("Finish waiting for attack");
+    }
+
+    public synchronized void updateAttack() {
+        isAttack = true;
+        try {
+            wait(100);
+        } catch (InterruptedException e) {
+            LOGGER.warn("Stop sleeping in updateAttack");
+        }
+        notifyAll();
+        LOGGER.info("Attack updated");
+    }
 
     public synchronized void waitAnswers() {
         LOGGER.info("Start checking answer for wait");

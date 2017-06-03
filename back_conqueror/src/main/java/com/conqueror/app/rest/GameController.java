@@ -49,6 +49,11 @@ public class GameController {
         return gson.toJson(gameService.checkMove(gameId, username));
     }
 
+    @GetMapping("waitUserAttack")
+    public String waitUserAttack(long gameId) {
+        return gson.toJson(gameService.waitUserAttack(gameId));
+    }
+
     @GetMapping("sendAnswer")
     public String sendAnswer(long gameId, String username, String answer) {
         return gson.toJson(gameService.sendAnswer(gameId, username, answer));
