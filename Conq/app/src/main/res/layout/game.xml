@@ -13,52 +13,66 @@
             android:id="@+id/fl">
 
         <ImageView
-                android:layout_width="wrap_content"
+                android:layout_width="wrap_content" android:elevation="0dp"
                 android:layout_height="wrap_content"   android:id="@+id/area1"/>
         <ImageView
-                android:layout_width="wrap_content"
+                android:layout_width="wrap_content" android:elevation="0dp"
                 android:layout_height="wrap_content"   android:id="@+id/area2"/>
         <ImageView
                 android:layout_width="wrap_content"
+                android:elevation="0dp"
                 android:layout_height="wrap_content"   android:id="@+id/area3"/>
         <ImageView
                 android:layout_width="wrap_content"
+                android:elevation="0dp"
                 android:layout_height="wrap_content"   android:id="@+id/area4"/>
         <ImageView
                 android:layout_width="wrap_content"
+                android:elevation="0dp"
                 android:layout_height="wrap_content"   android:id="@+id/area5"/>
         <ImageView
                 android:layout_width="wrap_content"
+                android:elevation="0dp"
                 android:layout_height="wrap_content"   android:id="@+id/area6"/>
         <ImageView
                 android:layout_width="wrap_content"
+                android:elevation="0dp"
                 android:layout_height="wrap_content"   android:id="@+id/area7"/>
         <ImageView
                 android:layout_width="wrap_content"
+                android:elevation="0dp"
                 android:layout_height="wrap_content"   android:id="@+id/area8"/>
         <ImageView
                 android:layout_width="wrap_content"
+                android:elevation="0dp"
                 android:layout_height="wrap_content"   android:id="@+id/area9"/>
         <ImageView
                 android:layout_width="wrap_content"
+                android:elevation="0dp"
                 android:layout_height="wrap_content"   android:id="@+id/area10"/>
         <ImageView
                 android:layout_width="wrap_content"
+                android:elevation="0dp"
                 android:layout_height="wrap_content"   android:id="@+id/area11"/>
         <ImageView
                 android:layout_width="wrap_content"
+                android:elevation="0dp"
                 android:layout_height="wrap_content"   android:id="@+id/area12"/>
         <ImageView
                 android:layout_width="wrap_content"
+                android:elevation="0dp"
                 android:layout_height="wrap_content"   android:id="@+id/area13"/>
         <ImageView
                 android:layout_width="wrap_content"
+                android:elevation="0dp"
                 android:layout_height="wrap_content"   android:id="@+id/area14"/>
         <ImageView
                 android:layout_width="wrap_content"
+                android:elevation="0dp"
                 android:layout_height="wrap_content"   android:id="@+id/area15"/>
         <ImageView
                 android:layout_width="match_parent"
+                android:elevation="0dp"
                 android:layout_height="match_parent" app:srcCompat="@drawable/map" android:id="@+id/map"/>
         <LinearLayout
                 android:orientation="horizontal"
@@ -69,17 +83,22 @@
                     android:text="Player1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/red" android:layout_weight="1"
+                    android:textColor="@color/colorRed"
                     android:layout_marginRight="10dp"/>
             <TextView
                     android:text="Player2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/green" android:layout_weight="1"
-                    android:layout_marginRight="10dp"/>
+                    android:layout_marginRight="10dp"
+                    android:textColor="@color/colorGreen"
+            />
             <TextView
                     android:text="Player3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/blue" android:layout_weight="1"
-                    android:layout_marginRight="10dp"/>
+                    android:layout_marginRight="10dp"
+                    android:textColor="@color/colorBlue"
+            />
         </LinearLayout>
         <LinearLayout
                 android:orientation="horizontal"
@@ -91,6 +110,36 @@
                     android:text="Current Player"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/current" android:layout_weight="1"/>
+        </LinearLayout>
+        <LinearLayout
+                android:orientation="vertical"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/questionTable"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:visibility="invisible"
+                android:background="@color/colorWhite" android:layout_weight="1"
+                android:elevation="10dp">
+            <TextView
+                    android:text="TextView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:id="@+id/question"/>
+            <Button
+                    android:text="A1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:id="@+id/answer1"/>
+            <Button
+                    android:text="A2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:id="@+id/answer2"/>
+            <Button
+                    android:text="A3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:id="@+id/answer3"/>
+            <Button
+                    android:text="A4"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:id="@+id/answer4"/>
         </LinearLayout>
     </FrameLayout>
 </LinearLayout>
