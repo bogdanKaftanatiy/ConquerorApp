@@ -118,6 +118,7 @@ public class GameSynchronizer {
     }
 
     public void resetSynchronizer() {
+        isAttack = false;
         answersCount = 0;
         moveEnd = 0;
     }
