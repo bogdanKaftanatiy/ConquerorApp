@@ -83,17 +83,22 @@
                     android:text="Player1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/red" android:layout_weight="1"
+                    android:textColor="@color/colorRed"
                     android:layout_marginRight="10dp"/>
             <TextView
                     android:text="Player2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/green" android:layout_weight="1"
-                    android:layout_marginRight="10dp"/>
+                    android:layout_marginRight="10dp"
+                    android:textColor="@color/colorGreen"
+            />
             <TextView
                     android:text="Player3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/blue" android:layout_weight="1"
-                    android:layout_marginRight="10dp"/>
+                    android:layout_marginRight="10dp"
+                    android:textColor="@color/colorBlue"
+            />
         </LinearLayout>
         <LinearLayout
                 android:orientation="horizontal"

@@ -13,6 +13,7 @@ public  class Login extends AsyncTask<Void,String,String>
 {
     String l,p;
     public Login(String login, String password){
+        super();
         l=login;
         p=password;
     }

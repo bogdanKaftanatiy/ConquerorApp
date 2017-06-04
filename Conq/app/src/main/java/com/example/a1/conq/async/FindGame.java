@@ -10,17 +10,13 @@ import com.example.a1.conq.SingletonUser;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Scanner;
 
-/**
- * Created by 1 on 03.06.2017.
- */
 public class FindGame extends AsyncTask<String,String,String>
 {
-    MainActivity  mainActivity;
-    Intent intent;
+    private MainActivity  mainActivity;
+    private Intent intent;
     public FindGame( MainActivity  mainActivity){
         super();
         this.mainActivity=mainActivity;
@@ -38,21 +34,17 @@ public class FindGame extends AsyncTask<String,String,String>
                 InputStream response = urlConnection.getInputStream();
                 Scanner s = new Scanner(response).useDelimiter("\\A");
                 String result = s.hasNext() ? s.next() : "";
-                Log.d("MAIN","id game" + result);
+                Log.d("MAIN","id game:" + result);
                 int id = Integer.parseInt(result);
                 if(id>=0){
-                    SingletonUser.getSingletonUser().setName(params[0]);
                     SingletonUser.getSingletonUser().setCurrentGame(id);
-                    mainActivity.startActivity(intent);
                 }
             }
             finally {
                 urlConnection.disconnect();
             }
         }
-        catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -61,6 +53,6 @@ public class FindGame extends AsyncTask<String,String,String>
     @Override
     protected void onPostExecute(String result)
     {
-
+        mainActivity.startActivity(intent);
     }
 }
