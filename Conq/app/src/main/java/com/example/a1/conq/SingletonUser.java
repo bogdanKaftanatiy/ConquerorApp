@@ -1,8 +1,6 @@
 package com.example.a1.conq;
 
-/**
- * Created by 1 on 01.06.2017.
- */
+
 public class SingletonUser {
     String name;
     int currentGame;

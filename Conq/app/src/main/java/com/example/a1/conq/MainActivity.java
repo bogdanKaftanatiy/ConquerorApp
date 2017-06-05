@@ -32,6 +32,14 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         newGame.setOnClickListener(oclNewGame);
+        Button quit = (Button) findViewById(R.id.quit);
+        View.OnClickListener oclQuit = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        };
+        quit.setOnClickListener(oclQuit);
         Button regAuto = (Button) findViewById(R.id.regauto);
         View.OnClickListener oclRegAuto = new View.OnClickListener() {
             @Override
@@ -54,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         String l=inputLogin.getText().toString();
                         String p=inputPass.getText().toString();
-                        new Login(l,p).execute();
+                        new Login(l,p,MainActivity.this).execute();
                     }
                 });
                 builder.setNeutralButton("reg", new DialogInterface.OnClickListener() {

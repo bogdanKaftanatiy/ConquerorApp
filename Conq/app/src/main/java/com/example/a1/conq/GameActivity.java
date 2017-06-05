@@ -3,7 +3,6 @@ package com.example.a1.conq;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
@@ -20,7 +19,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class GameActivity extends AppCompatActivity implements View.OnTouchListener {
     private int width;
@@ -141,14 +139,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         Log.d("GAME","play game");
         if(!progress.get(currentStep).equals(SingletonUser.getSingletonUser().getName())) {
             Log.d("GAME","Wait user  attack");
-            Handler handler = new Handler();
-            handler.postDelayed(new Runnable(){
-                @Override
-                public void run(){
-                    new WaitUserAttack(GameActivity.this).execute();
-                }
-            }, 10000);
-
+            new WaitUserAttack(GameActivity.this).execute();
         }else{
             Log.d("GAME","touch to ATTACK");
         }

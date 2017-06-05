@@ -2,6 +2,8 @@ package com.example.a1.conq.async;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
+import com.example.a1.conq.MainActivity;
 import com.example.a1.conq.SingletonUser;
 import java.io.IOException;
 import java.io.InputStream;
@@ -12,10 +14,12 @@ import java.util.Scanner;
 public  class Login extends AsyncTask<Void,String,String>
 {
     String l,p;
-    public Login(String login, String password){
+    MainActivity mainActivity;
+    public Login(String login, String password,MainActivity ma){
         super();
         l=login;
         p=password;
+        mainActivity=ma;
     }
     protected void onPreExecute() {
     }
@@ -46,6 +50,6 @@ public  class Login extends AsyncTask<Void,String,String>
     @Override
     protected void onPostExecute(String result)
     {
-
+        Toast.makeText(mainActivity.getApplicationContext(),"Auto S",Toast.LENGTH_LONG).show();
     }
 }

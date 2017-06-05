@@ -2,6 +2,7 @@ package com.example.a1.conq;
 
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -12,7 +13,6 @@ import android.widget.Button;
 import android.widget.TextView;
 import com.example.a1.conq.entity.User;
 import com.google.gson.Gson;
-
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -23,6 +23,7 @@ public class Registration extends AppCompatActivity  {
     Button ok;
     Button cancel;
     TextView pass;
+    TextView vk;
     TextView confirmPass;
     TextView login;
 
@@ -44,6 +45,23 @@ public class Registration extends AppCompatActivity  {
         };
         ok.setOnClickListener(oclNewGame);
 
+        vk = (Button) findViewById(R.id.vkButton);
+        View.OnClickListener oclVK = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Registration.this, RegistrationWithVK.class);
+                startActivity(intent);
+            }
+        };
+        vk.setOnClickListener(oclVK);
+        Button cancel = (Button) findViewById(R.id.cancel);
+        View.OnClickListener oclCancel = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        };
+        cancel.setOnClickListener(oclCancel);
         pass = (TextView) findViewById(R.id.pass);
         confirmPass = (TextView) findViewById(R.id.confirmPass);
         login = (TextView) findViewById(R.id.login);
