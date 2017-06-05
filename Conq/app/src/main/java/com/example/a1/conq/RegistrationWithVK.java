@@ -87,7 +87,6 @@ public class RegistrationWithVK extends AppCompatActivity {
     }
     class MyDownloadTask extends AsyncTask<Void,String,String>
     {
-
         protected void onPreExecute() {
         }
         @Override
