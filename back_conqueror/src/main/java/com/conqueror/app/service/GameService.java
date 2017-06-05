@@ -125,7 +125,7 @@ public class GameService {
         Game game = findGameById(gameId);
 
         game.gameSynchronizer.waitAttack();
-        return "User " + game.attackUser.getName() + " attacks";
+        return "User attacks";
     }
 
     public Game getGame(String userName) {

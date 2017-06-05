@@ -111,35 +111,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/current" android:layout_weight="1"/>
         </LinearLayout>
-        <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:id="@+id/questionTable"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:visibility="invisible"
-                android:background="@color/colorWhite" android:layout_weight="1"
-                android:elevation="10dp">
-            <TextView
-                    android:text="TextView"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" android:id="@+id/question"/>
-            <Button
-                    android:text="A1"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" android:id="@+id/answer1"/>
-            <Button
-                    android:text="A2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" android:id="@+id/answer2"/>
-            <Button
-                    android:text="A3"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" android:id="@+id/answer3"/>
-            <Button
-                    android:text="A4"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" android:id="@+id/answer4"/>
-        </LinearLayout>
+
     </FrameLayout>
 </LinearLayout>

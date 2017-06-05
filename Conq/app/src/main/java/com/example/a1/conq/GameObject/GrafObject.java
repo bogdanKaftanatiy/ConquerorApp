@@ -30,6 +30,14 @@ public class GrafObject implements Serializable {
 
 	}
 
+	public ArrayList<GrafObject> getNearbyAreas() {
+		return nearbyAreas;
+	}
+
+	public void setNearbyAreas(ArrayList<GrafObject> nearbyAreas) {
+		this.nearbyAreas = nearbyAreas;
+	}
+
 	public int getNumber() {
 		return number;
 	}

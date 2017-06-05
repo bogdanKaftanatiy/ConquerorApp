@@ -3,8 +3,7 @@ package com.example.a1.conq.async;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
-import com.example.a1.conq.GameActivity;
-import com.example.a1.conq.SingletonUser;
+import com.example.a1.conq.*;
 import com.example.a1.conq.entity.QuestionWrapper;
 import com.google.gson.Gson;
 
@@ -60,6 +59,7 @@ public class Attack extends AsyncTask<Integer,String,String>
     }
     @Override
     protected void onPostExecute(String result){
+
         game.showQuestion(questionWrapper);
     }
 }

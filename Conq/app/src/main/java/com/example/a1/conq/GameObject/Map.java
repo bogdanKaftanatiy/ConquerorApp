@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 public class Map implements Serializable {
     ArrayList<GrafObject> areas;
+    ArrayList<GrafObject> areasFroOwnUse;
     int height;
     int width;
 
@@ -293,6 +294,23 @@ public class Map implements Serializable {
         areas.add(grafObject13);
         areas.add(grafObject14);
         areas.add(grafObject15);
+
+        areasFroOwnUse = new ArrayList<>() ;
+        areasFroOwnUse.add(grafObject1);
+        areasFroOwnUse.add(grafObject2);
+        areasFroOwnUse.add(grafObject3);
+        areasFroOwnUse.add(grafObject4);
+        areasFroOwnUse.add(grafObject5);
+        areasFroOwnUse.add(grafObject6);
+        areasFroOwnUse.add(grafObject7);
+        areasFroOwnUse.add(grafObject8);
+        areasFroOwnUse.add(grafObject9);
+        areasFroOwnUse.add(grafObject10);
+        areasFroOwnUse.add(grafObject11);
+        areasFroOwnUse.add(grafObject12);
+        areasFroOwnUse.add(grafObject13);
+        areasFroOwnUse.add(grafObject14);
+        areasFroOwnUse.add(grafObject15);
     }
 
     public int getHeight() {
@@ -311,20 +329,9 @@ public class Map implements Serializable {
         this.width = width;
     }
 
-    public void writeToFile(File file){
-        try{
-        final FileOutputStream fos = new FileOutputStream(file);
-        final ObjectOutputStream oos = new ObjectOutputStream(fos);
-        oos.writeObject(this);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
     public int touch(int x, int y){
-        for(int i=0; i<areas.size();i++){
-            int result = areas.get(i).ifIn(x,y);
+        for(int i=0; i<areasFroOwnUse.size();i++){
+            int result = areasFroOwnUse.get(i).ifIn(x,y);
             if (result>0) return result;
         }
         return  0;

@@ -1,8 +1,11 @@
 package com.example.a1.conq.async;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 import com.example.a1.conq.GameActivity;
+import com.example.a1.conq.QuestionActivity;
 import com.example.a1.conq.SingletonUser;
 import com.google.gson.Gson;
 
@@ -13,19 +16,19 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class CheckAnswer extends AsyncTask<Integer,String,String>
+public class CheckAnswer extends AsyncTask<Void,String,String>
 {
     String ans;
-    GameActivity game;
-    public CheckAnswer(GameActivity gameActivity,String a){
+    QuestionActivity questionActivity;
+    public CheckAnswer(QuestionActivity questionActivity,String a){
         super();
         ans=a;
-        game=gameActivity;
+        this.questionActivity=questionActivity;
     }
     protected void onPreExecute() {
     }
     @Override
-    protected String doInBackground(Integer... params) {
+    protected String doInBackground(Void... params) {
         try {
             URL url = new URL("http://10.0.3.2:8080/rest/game/sendAnswer?gameId="+
                     SingletonUser.getSingletonUser().getCurrentGame()+
@@ -44,19 +47,15 @@ public class CheckAnswer extends AsyncTask<Integer,String,String>
 
                 Gson gson = new Gson();
                 boolean b = (gson.fromJson(response.toString(), Boolean.class));
-                Log.d("GAME","ANSWE" + b);
-                if(b){
-                    game.conqArea(params[0].intValue(),SingletonUser.getSingletonUser().getName());
-                }
-
+                Log.d("GAME","ANSWER " + b);
+                Intent intent= questionActivity.getIntent();
+                intent.putExtra("result",b);
             }
             finally {
                 urlConnection.disconnect();
             }
         }
-        catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -64,6 +63,9 @@ public class CheckAnswer extends AsyncTask<Integer,String,String>
     }
     @Override
     protected void onPostExecute(String result){
-        game.newTurn();
+        Log.d("TTTTTTTTTTTTTTTTTTT","on Post execute check answer");
+        Toast.makeText(questionActivity.getApplicationContext(),"Answer checked",Toast.LENGTH_LONG).show();
+        questionActivity.myFinish();
+        Log.d("TTTTTTTTTTTTTTTTTTT","on Post execute qa.finish");
     }
 }

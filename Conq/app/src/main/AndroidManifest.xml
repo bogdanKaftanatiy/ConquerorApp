@@ -27,6 +27,10 @@
         <activity android:name=".RegistrationWithVK"
                   android:screenOrientation="landscape" >
         </activity>
+        <activity android:name=".QuestionActivity"
+                  android:screenOrientation="landscape" >
+        </activity>
+
     </application>
 
 </manifest>
