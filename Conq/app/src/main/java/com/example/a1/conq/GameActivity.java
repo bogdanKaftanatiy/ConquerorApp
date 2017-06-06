@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Display;
@@ -40,37 +41,30 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     private ArrayList<GrafObject> areas;
 
     private ArrayList<String> progress;
-
-    private Button a1 ;
-    private Button a2 ;
-    private Button a3 ;
-    private Button a4;
+    private ArrayList<ImageView> attackChips;
     private String answer;
     private boolean deff;
     private int currentStep;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.game);
         prepareToGame();
         Log.d("GAME", "START");
-
     }
     private void prepareToGame(){
         att=-1;
         answer="";
         currentStep=0;
+        attackChips=new ArrayList<>();
         progress=new ArrayList<>();
         setUpMap();
         deff =false;
         curr = (TextView) findViewById(R.id.current);
 
-
         Display display = getWindowManager().getDefaultDisplay();
         width = display.getWidth();
         height = display.getHeight();
-
 
         redUser = (TextView) findViewById(R.id.red);
         greenUser = (TextView) findViewById(R.id.green);
@@ -83,23 +77,6 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         areas=map.getAreas();
         setPositionView();
         new GetSeq().execute();
-       /* a1 = (Button) findViewById(R.id.answer1);
-        a2 = (Button) findViewById(R.id.answer2);
-        a3 = (Button) findViewById(R.id.answer3);
-        a4 = (Button) findViewById(R.id.answer4);
-        View.OnClickListener sendAnswer= new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Button b =(Button) findViewById(v.getId());
-                new CheckAnswer(GameActivity.this, b.getText().toString()).execute(att);
-                LinearLayout ll = (LinearLayout) findViewById(R.id.questionTable);
-                ll.setVisibility(View.INVISIBLE);
-            }
-        };
-        a1.setOnClickListener(sendAnswer);
-        a2.setOnClickListener(sendAnswer);
-        a3.setOnClickListener(sendAnswer);
-        a4.setOnClickListener(sendAnswer);*/
     }
     private void setUpMap(){
         map = new Map();
@@ -130,9 +107,9 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         for(int i=0;i<areas.size();i++){
             FrameLayout.LayoutParams params = new FrameLayout.LayoutParams((int)(100d/map.getHeight()*height),
                     (int) (100d/map.getWidth()*width));
-            Log.d("1234",""+(int)(((areas.get(i).getCenter().getX() -50d)/map.getHeight())*height));
-            params.leftMargin = (int)(((areas.get(i).getCenter().getX() -50d)/map.getHeight())*height);
-            params.topMargin  = (int)((areas.get(i).getCenter().getY()-50d)/map.getWidth()*width);
+
+            params.leftMargin = (int)(((areas.get(i).getCenter().getX() -50d)/map.getWidth())*width);
+            params.topMargin  = (int)((areas.get(i).getCenter().getY()-50d)/map.getHeight()*height);
             fl.removeView(areas.get(i).getChip());
             fl.addView(areas.get(i).getChip(), params);
         }
@@ -156,15 +133,21 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
                 Log.d("GAME","ANSWER");
                 boolean b = data.getBooleanExtra("result",false);
 
-
                 Log.d("GAME","ANSWE" + b);
                 if(b){
                     conqArea(att,SingletonUser.getSingletonUser().getName());
                 }else{
-                    //срочно тестить
-                   // checkState();
+                    if (!SingletonUser.getSingletonUser().getName().equals(progress.get(currentStep)))
+                        conqArea(att,progress.get(currentStep));
+
                 }
-                newTurn();
+                Handler handler = new Handler();
+                handler.postDelayed(new Runnable() {
+                    public void run() {
+                        newTurn();
+                    }
+                }, 2000);
+
             }else {
                 Log.d("GAME","SMTH WRONG");
             }
@@ -179,20 +162,7 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         intent.putExtra("a4",qw.getAnswer4());
         intent.putExtra("att",att);
 
-
         startActivityForResult(intent, QUESTION);
-        /*
-        LinearLayout ll = (LinearLayout) findViewById(R.id.questionTable);
-        TextView q = (TextView) findViewById(R.id.question);
-        q.setText(qw.getQuestion());
-
-        a1.setText(qw.getAnswer1());
-        a2.setText(qw.getAnswer2());
-        a3.setText(qw.getAnswer3());
-        a4.setText(qw.getAnswer4());
-
-        ll.setVisibility(View.VISIBLE);
-*/
     }
     private void endGame(){
         Log.d("GAME","END");
@@ -214,7 +184,8 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         new DefeatOrNothing(this).execute();
     }
     public void newTurn(){
-        if(currentStep<progress.size()){
+        if(currentStep<progress.size()-1){
+            Log.d("11111111111111111",currentStep+" "+progress.get(currentStep)+" "+ progress.get(currentStep+1));
             currentStep++;
             deff=false;
             setCurrent();
@@ -227,9 +198,10 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
     }
 
     private void removeAttackChip() {
-        for(int i=0;i<attackHolding.size();i++){
-            attackHolding.get(i).getChip().setImageBitmap(null);
+        for(int i=0;i<attackChips.size();i++){
+            attackChips.get(i).setImageBitmap(null);
         }
+        attackChips=new ArrayList<>();
     }
 
     public void prepareAttack(){
@@ -245,12 +217,8 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         for (int i=0;i<arrayList.size();i++){
             ArrayList<GrafObject> near = arrayList.get(i).getNearbyAreas();
             for(int j=0;j<near.size();j++){
-                if((!attackHolding.contains(near.get(j))) && (!arrayList.contains(near.get(j)))){
+                if((!attackHolding.contains(near.get(j))) && (!arrayList.contains(near.get(j))))
                     attackHolding.add(near.get(j));
-                    Log.d("111111111111111111","add " + near.get(j).getNumber());
-                }else{
-                    Log.d("111111111111111111","no add " + near.get(j).getNumber());
-                }
             }
         }
     }
@@ -456,8 +424,18 @@ public class GameActivity extends AppCompatActivity implements View.OnTouchListe
         }
         if(progress.get(currentStep).equals(SingletonUser.getSingletonUser().getName())) {
             prepareAttack();
+            FrameLayout fl = (FrameLayout) findViewById(R.id.fl);
             for(int i=0;i<attackHolding.size();i++){
-                attackHolding.get(i).getChip().setImageResource(R.drawable.attackchip);
+
+                ImageView imageView = new ImageView(this);
+                imageView.setImageResource(R.drawable.attackchip);
+                FrameLayout.LayoutParams params = new FrameLayout.LayoutParams((int)(100d/map.getHeight()*height),
+                        (int) (100d/map.getWidth()*width));
+
+                params.leftMargin = (int)(((attackHolding.get(i).getCenter().getX() -50d)/map.getWidth())*width);
+                params.topMargin  = (int)((attackHolding.get(i).getCenter().getY()-50d)/map.getHeight()*height);
+                attackChips.add(imageView);
+                fl.addView(imageView, params);
             }
         }
     }

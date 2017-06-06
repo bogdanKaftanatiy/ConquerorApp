@@ -73,6 +73,7 @@
         <ImageView
                 android:layout_width="match_parent"
                 android:elevation="0dp"
+                android:scaleType="fitXY"
                 android:layout_height="match_parent" app:srcCompat="@drawable/map" android:id="@+id/map"/>
         <LinearLayout
                 android:orientation="horizontal"

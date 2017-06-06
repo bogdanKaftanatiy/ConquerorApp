@@ -47,7 +47,7 @@ public class CheckState extends AsyncTask<Void,Void,Void>
                 entry = (gson.fromJson(response.toString(),  AbstractMap.SimpleEntry.class));
                 Number key = entry.getKey();
                 String value = entry.getValue();
-                if(!value.equals("")){
+                if(value!=null){
                     game.conqArea(key.intValue(),value);
                 }
             }
@@ -63,7 +63,6 @@ public class CheckState extends AsyncTask<Void,Void,Void>
     }
     @Override
     protected void onPostExecute(Void result){
-
         game.newTurn();
     }
 }
