@@ -58,7 +58,6 @@ public class CheckAnswer extends AsyncTask<Void,String,String>
         catch (IOException e) {
             e.printStackTrace();
         }
-
         return null;
     }
     @Override

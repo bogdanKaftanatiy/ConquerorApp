@@ -17,7 +17,7 @@ public class QuestionActivity extends AppCompatActivity{
     private Intent answerIntent;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("QQQQQQQQQQQQQ","start");
+        Log.d("GAME","start question");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.question);
 
